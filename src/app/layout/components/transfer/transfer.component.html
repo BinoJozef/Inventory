@@ -1,0 +1,125 @@
+<p-growl [life]="5000" [value]="msgs"></p-growl>
+
+
+<div *ngIf="!formActive" class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4" style="text-align:center;">{{templateMessage}}</h1>
+  </div>
+</div>
+
+<loadingspinner *ngIf="!customers && formActive"></loadingspinner>
+
+
+<form *ngIf="formActive && customers" class="form-signin" #f="ngForm" (ngSubmit)="submit()" novalidate>
+
+
+  <div class="d-flex flex-row">
+    <div class="checkbox checkbox-danger p-2 ">
+      <input [disabled]="disabledGroup" id="checkbox6" type="checkbox" (change)="transferChecked($event)" [checked]="transferActive">
+      <label for="checkbox6">
+        Transfer
+      </label>
+    </div>
+    <div class="checkbox checkbox-primary p-2">
+      <input [disabled]="disabledGroup" id="checkbox2" type="checkbox" (change)="returnChecked($event)" [checked]="returnActive">
+      <label for="checkbox2">
+        Qaytarma
+      </label>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+
+      <div class="form-group">
+
+        <label for="oldCustomerCode">Müştəri kodu və adı</label>
+
+        <ng-select [disabled]="disabledGroup" name="oldCustomerCode" #oldCustomerCode="ngModel" (change)="onCustomerCodeChange()"
+          [(ngModel)]="transfer.oldCustomerCode" [virtualScroll]="true" [loading]="loading" labelForId="customerCode" placeholder="Müştəri seçin"
+          required>
+          <ng-option *ngFor="let c of customers" value="{{c.code}}">{{c.code}}-{{c.name }}</ng-option>
+        </ng-select>
+
+        <span style="color:red" *ngIf="oldCustomerCode.touched && oldCustomerCode.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="customertype">Müştəri tipi</label>
+        <div class="input-group">
+          <input disabled [value]="customerCategory" name="customertype" id="customertype" type="text" class="form-control">
+        </div>
+      </div>
+
+
+
+
+      <div class="form-group">
+        <label for="itemCode">Inventar kodu və adı</label>
+
+        <ng-select [disabled]="disabledGroup"  name="itemCode" #itemCode="ngModel" [(ngModel)]="transfer.itemCode" labelForId="itemCode" placeholder="İnventar kodu seçin"
+          required>
+          <ng-option *ngFor="let i of customerItems" value="{{i.code}}">{{i.code}}-{{i.name }}</ng-option>
+        </ng-select>
+
+        <span style="color:red" *ngIf="itemCode.touched && itemCode.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+
+
+      <div *ngIf="transferActive" class="form-group">
+
+        <label for="customerCode">Müştəri</label>
+        <ng-select [disabled]="disabledGroup" name="customerCode" #customerCode="ngModel" [(ngModel)]="transfer.customerCode" labelForId="customerCode"
+          placeholder="Müştəri seçin" required>
+          <ng-option *ngFor="let c of customers" value="{{c.code}}">{{c.code}}-{{c.name }}</ng-option>
+        </ng-select>
+        <span style="color:red" *ngIf="customerCode.touched && customerCode.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+      <div *ngIf="returnActive" class="form-group">
+        <label for="itemStatus">Səbəb</label>
+        <ng-select [disabled]="disabledGroup" [items]="statuses"  bindLabel="name"
+          bindValue="id" name="itemStatus" #reason="ngModel" [(ngModel)]="transfer.reasonId" labelForId="itemStatus"
+          placeholder="Səbəb seçin" required>
+          <!-- <ng-option *ngFor="let c of statuses" value="{{c.id}}">{{c.name}}</ng-option> -->
+        </ng-select>
+        <span style="color:red" *ngIf="reason.touched && reason.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+      <div class="form-group">
+        <label for="note">Qeyd</label>
+        <textarea #note="ngModel" [(ngModel)]="transfer.note" name="note" id="note" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div *ngIf="transfer.masterId" class="form-group">
+          <label>Mövcud Qeydlər</label>
+          <ul class="list-group" >
+            <li class="list-group-item list-group-item-info" *ngFor="let n of notes">{{n.userName}}({{n.noteBy}})    
+              <ul class="list-group" >
+                <li class="list-group-item list-group-item-primary">{{n.note}}</li>
+              </ul>
+            </li>
+          </ul>
+      </div>
+
+    </div>
+
+  
+
+
+  </div>
+
+  <div>
+    <button [disabled]="!f.valid" class="btn  btn-primary">Təsdiq Et</button>
+
+    <button *ngIf="transfer.masterId" type="button" class="btn btn-danger" (click)="cancelTransfer()">Imtina Et</button>
+  </div>
+
+</form>

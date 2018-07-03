@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~bootstrap/dist/css/bootstrap.min.css";
+/* @import "~ng2-toasty/bundles/style-bootstrap.css"; */
+@import "~font-awesome/css/font-awesome.min.css";
+@import "~primeng/resources/themes/omega/theme.css";
+@import "~primeng/resources/primeng.min.css";
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~pace-js/themes/orange/pace-theme-flash.css";
+
+
+.ui-widget {
+    font-size: 13px;
+}
+
+.ui-growl {
+	top: 60px;
+	right: 20px;
+
+}
+body{
+    background-color: #f5f5f5;
+    font-size: 15px;
+}
+
+
+
+
+
+

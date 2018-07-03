@@ -1,0 +1,269 @@
+<p-growl [life]="3000" [value]="msgs"></p-growl>
+
+<loadingspinner *ngIf="!appeals"></loadingspinner>
+
+<div *ngIf="appeals">
+  <!-- <a *ngIf="newOrderButtonActive" routerLink="/order/new" class="btn btn-primary btn-sm">
+    <span class="fa fa-plus"></span>
+    Yeni Sifariş
+  </a> -->
+
+
+  
+  <p-dataTable #dt emptyMessage="Sizin mövcud sifarişiniz tapılmadı" [value]="appeals" selectionMode="single" [(selection)]="selectedAppeal" (onRowSelect)="onRowSelect($event)" [paginator]="true"
+    [rows]="8" [responsive]="true">
+    <p-header>Sifarişlər</p-header>
+    <p-column field="masterId" header="Müraciət No." [filter]="true" filterPlaceholder="Axtar" ></p-column>
+    <p-column field="appealType" header="Müraciət Növü" [filter]="true" filterPlaceholder="Axtar" ></p-column>
+    <p-column field="createdDate" header="Tarix" [filter]="true" filterPlaceholder="Axtar"></p-column>
+    <p-column field="status" header="Müraciət Statusu" [filter]="true" filterPlaceholder="Axtar"></p-column>
+    <p-column field="customerCode" header="Müştəri Kodu" [filter]="true" filterPlaceholder="Axtar"></p-column>
+    <p-column field="customerName" header="Müştəri Adı" [filter]="true" filterPlaceholder="Axtar"></p-column>
+    <p-column field="category" header="İnventar Kateqoriyası" [filter]="true" filterPlaceholder="Axtar"></p-column>
+    <p-column field="groupName" header="Sifarişçi" [filter]="true" filterMatchMode="equals">
+
+      <ng-template pTemplate="filter" let-col>
+        <p-dropdown [options]="groupNames" [style]="{'width':'100%'}" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" styleClass="ui-column-filter"></p-dropdown>
+    </ng-template>
+
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix" style="width:100%">
+            <button *ngIf="deleteBtnActive" style="float:left" [disabled]="(!selectedAppeal || selectedAppeal?.length ===0)" type="button" class="btn btn-danger btn-sm" (click)="endProcess()">
+                Dayandır
+            </button>
+            <button type="button" style="float:left; margin-left:10px;" class="btn btn-warning btn-sm" (click)="dt.exportCSV()" >
+                    <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+            <button *ngIf="pdfBtnActive" type="button" style="float:left; margin-left:10px;" class="btn btn-secondary btn-sm" (click)="pdfDownload($event)" >
+                      <i class="fa fa-print"></i>&nbsp;Çap</button>
+        </div>
+    </p-footer>
+  </p-dataTable>
+
+<div *ngIf="timeLineActive">
+  <ul class="timeline" id="timeline">
+    <li class="li" [ngClass]="{'complete':bM.class==='complete'}">
+      <div class="timestamp">
+        <span class="author">Bölgə Müdiri</span>
+        <span class="date">{{bM.date}}</span>
+      </div>
+      <div class="status">
+        <h4> {{bM.status}} </h4>
+      </div>
+    </li>
+
+    <li *ngIf="marketingCssActive" class="li" [ngClass]="{'complete':tm.class==='complete', 'cancel':tm.class==='cancel'}">
+      <div class="timestamp">
+        <span class="author">Ticari Marketinq</span>
+        <span class="date">{{tm.date}}</span>
+      </div>
+      <div class="status">
+        <h4> {{tm.status}} </h4>
+      </div>
+    </li>
+    
+    <li *ngIf="marketingCssActive" class="li" [ngClass]="{'complete':m.class==='complete', 'cancel':m.class==='cancel'}">
+      <div class="timestamp">
+        <span class="author">Marketinq</span>
+        <span class="date">{{m.date}}</span>
+      </div>
+      <div class="status">
+        <h4> {{m.status}} </h4>
+      </div>
+    </li>
+   
+    <li class="li"  [ngClass]="{'complete':t.class==='complete', 'cancel':t.class==='cancel'}">
+      <div class="timestamp">
+        <span class="author">Təchizat</span>
+        <span class="date">{{t.date}}</span>
+      </div>
+      <div class="status">
+        <h4> {{t.status}} </h4>
+      </div>
+    </li>
+    
+   </ul>
+</div>
+  
+
+</div>
+
+<div style="display: none">
+  <div id="demo">
+    <p style="text-align: center;">&nbsp;</p>
+    <p style="text-align: center;">
+      <strong>
+        <span style="font-size: 12.0pt; font-family: 'Times New Roman',serif;">&ldquo;{{printResource.companyName}} tərəfindən&nbsp; __________________________________ &uuml;nvanda yerləşən</span>
+      </strong>
+    </p>
+    <p style="text-align: center;">
+      <span style="font-size: 10.0pt; font-family: 'Times New Roman',serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      <span style="font-size: 8.0pt; font-family: 'Times New Roman',serif;">&nbsp;(&uuml;nvan)</span>
+    </p>
+    <p style="text-align: center;">
+      <strong>
+        <span style="font-size: 12.0pt; font-family: 'Times New Roman',serif;">&nbsp; &nbsp; &nbsp; &nbsp;{{printResource.customerName}}-a&nbsp; &nbsp;{{printResource.itemName}}&nbsp; &nbsp; &nbsp; &nbsp;</span>
+      </strong>
+    </p>
+    <p style="text-align: center;">
+      <strong>
+        <span style="font-size: 14.0pt; font-family: 'Times New Roman',serif;">&nbsp;təhvil-təslim edilməsi haqqında</span>
+      </strong>
+    </p>
+    <p style="text-align: center;">
+      <strong>
+        <span style="font-size: 16.0pt; line-height: 115%; font-family: 'Times New Roman',serif;">AKT</span>
+      </strong>
+    </p>
+    <p style="tab-stops: 13.6pt 345.75pt;">
+      <span style="font-size: 12.0pt; line-height: 115%; font-family: 'Times New Roman',serif;">&nbsp;&nbsp;&nbsp; Bakı&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&ldquo;{{today
+        | date:'dd'}}&rdquo;&nbsp; {{today | date:'MM'}} .2018-cı il</span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">Biz aşağıda imza edən tərəflər, </span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">&ldquo;Təhvil verən&rdquo; &ldquo;{{printResource.companyName}}-nin n&uuml;mayəndəsi ________________________________________________
+      </span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">və &ldquo;Təhvil alan&rdquo;____________________________________________________________________________</span>
+    </p>
+    <p style="text-align: justify;">
+      <em>
+        <span style="font-family: 'Times New Roman',serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+      </em>
+      <em>
+        <span style="font-size: 8.0pt; font-family: 'Times New Roman',serif;">(təhvil alanın SAA, Ş/V №si, yaşayış &uuml;nvanı)</span>
+      </em>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">bu aktı ona g&ouml;rə tərtib edirik ki, &ldquo;{{printResource.companyName}}-nin n&uuml;mayəndəsi&nbsp; tərəfindən&nbsp;&nbsp;</span>
+      <span style="font-family: 'Times New Roman',serif;">{{printResource.itemName}}&nbsp; adlı (markalı)&nbsp; {{printResource.itemCode}}</span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">{{printResource.itemName}}&nbsp; &nbsp; &nbsp; ______________________________________ &uuml;nvanda&nbsp; &nbsp; &nbsp;yerləşən V
+        {{printResource.customerCode}}&nbsp;</span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-size: 8.0pt; font-family: 'Times New Roman',serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(&uuml;nvan)</em>
+      </span>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">&nbsp; &nbsp; &nbsp; {{printResource.customerName}}-da&nbsp; obyektin n&uuml;mayəndəsi ____________________________________________________</span>
+    </p>
+    <p style="text-align: justify;">
+      <em>
+        <span style="font-size: 8.0pt; font-family: 'Times New Roman',serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (təhvil alan şəxsin SAA)</span>
+      </em>
+    </p>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">__________________
+        <u>_ na </u>tam işlək vəziyyətdə verilmişdir. Təhvil-təslim zamanı hər hansı q&uuml;sur aşkar edilməmişdir.</span>
+    </p>
+    <p style="tab-stops: center 238.5pt left 261.0pt;">
+      <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;">Eyni zamanda, tərəflər aşağıdakılar barədə razılaşırlar:</span>
+    </p>
+    <ol>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> &ldquo;Təhvil alan&rdquo; avadanlıq(lar)ın quraşdırılması, təmiri, habelə, m&uuml;xtəlif vaxtlarda nəzarət etməsi
+          &uuml;&ccedil;&uuml;n &ldquo;Təhvil verən&rdquo;ə lazımi şərait yaratmalıdır;</span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> &ldquo;Təhvil alan&rdquo; həmin avadanlıq(lar)da yalnız &ldquo;Təhvil verən&rdquo;in m&uuml;əyyən etdiyi malların
+          və məhsulların yerləşdirilməsini və m&uuml;ştərilərə n&uuml;mayiş etdirilməsini və avadanlıq(lar)ın yalnız bu məqsəd
+          &uuml;&ccedil;&uuml;n istifadə edilməsini təmin etməlidir, he&ccedil; bir halda kənar mal və məhsulları ora yerləşdirməməlidir;
+        </span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> &ldquo;Təhvil alan&rdquo; qəbul edir ki, avadanlıq(lar)da mal və məhsulların d&uuml;z&uuml;l&uuml;ş&uuml; və yerləşdirilməsi
+          &ldquo;Təhvil verən&rdquo;in &ouml;z m&uuml;lahizəsinə əsasən m&uuml;əyyən edilir və &ldquo;Təhvil verən&rdquo;in
+          razılığı olmadan bu d&uuml;z&uuml;l&uuml;ş&uuml; və yerləşdirməni dəyişdirmək qadağandır. </span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> &ldquo;Təhvil alan&rdquo; quraşdırılan avadanlıq(lar)ın və yerləşdirilən mal və məhsulların təhl&uuml;kəsizliyini
+          təmin edir, onları qoruyur, onlara zərər yetirilməməsi &uuml;&ccedil;&uuml;n b&uuml;t&uuml;n zəruri tədbirlər g&ouml;r&uuml;r.
+          Əks halda &ldquo;Təhvil alan&rdquo; vurulmuş zərər məbləğində tam məsuliyyət daşıyır.</span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> Avadanlıq(lar)ın istifadəsi ilə bağlı b&uuml;t&uuml;n vergilər, r&uuml;sumlar və s. &ouml;dənişlər &ldquo;Təhvil
+          alan&rdquo;a aiddir. </span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> Avadanlıq(lar)ın quraşdırıldığı mağaza bağlanmalı, s&ouml;k&uuml;lməli, təmir edilməli olduqda və ya avadanlıq(lar)ın
+          istifadəsinə mane olan hal ortaya &ccedil;ıxdıqda və bu kimi digər hallarda &ldquo;Təhvil alan&rdquo; &ldquo;Təhvil
+          verən&rdquo;ə ən azı 10 g&uuml;n qabaqcadan məlumat verməli və quraşdırılmış avadanlıq(lar)ın zərər olmadan geri
+          g&ouml;t&uuml;r&uuml;lməsini təmin etməlidir. Əks halda &ldquo;Təhvil alan&rdquo; avadanlıq(lar)a və mallara vurulmuş
+          zərər məbləğində tam məsuliyyət daşıyır.</span>
+      </li>
+      <li style="tab-stops: center 238.5pt left 261.0pt;">
+        <span style="font-size: 11.0pt; font-family: 'Times New Roman',serif;"> &ldquo;Təhvil verən&rdquo; istənilən vaxt &ldquo;Təhvil alan&rdquo;a vermiş olduğu avadanlıq(lar)ı geri almaq h&uuml;ququna
+          malikdir.
+        </span>
+      </li>
+    </ol>
+    <p style="text-align: justify;">
+      <span style="font-family: 'Times New Roman',serif;">Odur ki, bu Aktı &ouml;z imzalarımızla təsdiq edirik:</span>
+    </p>
+    <table style="border-collapse: collapse; border: none; height: 68px;" width="753">
+      <tbody>
+        <tr>
+          <td style="width: 356.038px; border: 1pt solid black; padding: 0in 5.4pt;">
+            <p style="margin-bottom: .0001pt; text-align: center; line-height: normal;">
+              <span style="font-size: 10pt;">
+                <strong>
+                  <span style="font-family: 'Times New Roman', serif;">Təhvil verən:</span>
+                </strong>
+              </span>
+            </p>
+            <p style="margin-bottom: .0001pt; line-height: normal;">
+              <span style="font-size: 10pt; font-family: 'Times New Roman', serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;_____________________________________</span>
+            </p>
+            <p style="margin-bottom: .0001pt; text-align: center; line-height: normal;">
+              <span style="font-size: 10pt;">
+                <em>
+                  <span style="font-family: 'Times New Roman', serif;">(SAA, imza)</span>
+                </em>
+                <span style="font-family: 'Times New Roman', serif;">&nbsp;</span>
+              </span>
+            </p>
+          </td>
+          <td style="width: 365.094px; border-top: 1pt solid black; border-right: 1pt solid black; border-bottom: 1pt solid black; border-image: initial; border-left: none; padding: 0in 5.4pt;">
+            <p style="margin-bottom: .0001pt; text-align: center; line-height: normal;">
+              <span style="font-size: 10pt;">
+                <strong>
+                  <span style="font-family: 'Times New Roman', serif;">Təhvil alan:</span>
+                </strong>
+              </span>
+            </p>
+            <p style="margin-bottom: .0001pt; line-height: normal;">
+              <span style="font-size: 10pt; font-family: 'Times New Roman', serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ______________________________________</span>
+            </p>
+            <p style="margin-bottom: .0001pt; text-align: center; line-height: normal;">
+              <span style="font-size: 10pt;">
+                <em>
+                  <span style="font-family: 'Times New Roman', serif;">(SAA, imza)</span>
+                </em>
+                <span style="font-family: 'Times New Roman', serif;">&nbsp;</span>
+              </span>
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>&nbsp;</p>
+  </div>
+
+</div>
+
+  

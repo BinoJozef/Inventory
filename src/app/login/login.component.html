@@ -1,0 +1,51 @@
+<p-growl [life]="3000" [value]="msgs"></p-growl>
+<div class="container">
+  <div class="row ">
+    
+    <div style="padding-top: 80px;" class="col-md-4 col-center">
+
+      <form class="form-signin" #f="ngForm" (ngSubmit)="login()">
+        <a style="display:block;text-align: center;">
+          <img src="../assets/ve1.png" alt="" width="125" height="90" style="margin:10px;">
+        </a>
+        <div class="form-group">
+          <label  for="username" >İstifadəçi Adı</label>
+          <input  #username="ngModel" [(ngModel)]="model.username" name="username" id="username" type="text" class="form-control" required>
+          <div class="alert alert-danger" *ngIf="username.touched && username.invalid">
+            İstifadəçi adın boş qoymaq olmaz!
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <label for="password" >Şifrə</label>
+          <div class="input-group">
+            <input  #password="ngModel" [(ngModel)]="model.password" name="password" id="password" type="password" class="form-control"
+              required>
+          </div>
+          <div class="alert alert-danger" *ngIf="password.touched && password.invalid">
+            Şifrəni boş qoymaq olmaz!
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <label for="categoryid" >Firma</label>
+          <select #categoryid="ngModel" [(ngModel)]="model.categoryid" name="categoryid" id="categoryid" class="form-control custom-select d-block w-100" required>
+            <option value=""></option>
+            <option value="2">Veyseloglu</option>
+            <option value="3">TruVega</option>
+            <option value="4">Horeka</option>
+          </select>
+          <div class="alert alert-danger" *ngIf="categoryid.touched && categoryid.invalid">
+            Firmanı seçmək gərəklidir!.
+          </div>
+        </div>
+        <button [disabled]="!f.valid" class="btn btn-lg btn-primary btn-block">Daxil Ol</button>
+        <p style="text-align: center;" class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+

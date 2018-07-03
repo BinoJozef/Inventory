@@ -1,0 +1,35 @@
+<p-growl [life]="3000" [value]="msgs"></p-growl>
+
+<loadingspinner *ngIf="!approves"></loadingspinner>
+
+
+<p-table *ngIf="approves" [columns]="cols" [value]="approves">
+    <ng-template pTemplate="caption">
+        Təsdiqlənməli olan müraciətlər
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td>
+                Heç bir məlumat tapılmadı!
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th style="text-align: center;" *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+            <th style="width:3em"></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+            </td>
+            <td>
+                <button pButton icon="fa fa-eye" (click)= "selectApprove(rowData)"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

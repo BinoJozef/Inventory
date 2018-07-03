@@ -1,0 +1,105 @@
+<!-- <h1 style=" font-style: italic;margin-top:20px; margin-bottom:20px;">Xoş Gəlmisiniz</h1> -->
+<!-- <div class="jumbotron">
+    <h1 class="display-4"></h1>
+    <p class="lead">İnventar İdarəsi adını verdiyimiz bu sayt, inventarlarla bağlı əməliyyatlar aparmaq üçün nəzərdə tutulmuştur.</p>
+    <hr class="my-4">
+    <p>Bu veb sayt Veyseloğlu Qrup IT heyyəti tərəfindən yaradılmışdır.Veysəloğlu haqda daha çox məlumat almaq üçün aşağıdakı
+        linkə daxil ola bilərsiniz.</p>
+    <a class="btn btn-primary btn-lg" href="https://www.veyseloglu.az/" role="button">Məlumat al</a>
+</div> -->
+
+<div class="row">
+
+    <div class="col col-sm-6">
+        <div class="card mb-3">
+            <div class="card bg-light">
+                <div class="card-header">
+                    Şirkətlər üzrə mövcud inventar sayı
+                </div>
+                <div class="card-body">
+                    <canvas [colors]="_backgroundColorsPie"  baseChart height="180px" [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" >
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col col-sm-6">
+        <div class="card mb-3">
+            <div class="card bg-light">
+                <div class="card-header">
+                    Şirkətlər üzrə müştərilərə təhkim olunmuş inventar sayı
+                </div>
+                <div class="card-body">
+                    <canvas [colors]="_backgroundColorsDoughnut" baseChart height="180px" [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+   <div class="col">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            Sifariş axışı təlimatı
+        </div>
+        <div class="card-body">
+            <ul class="timeline">
+                <li>
+                    <div class="timeline-badge">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">Sifarişin bölgə müdürü və ya marketinq şöbəsi  tərəfindən verilməsi</h4>
+
+                        </div>
+                        <div class="timeline-body">
+                            <ul>
+                                <li>İstifadəçi tərəfindən tələb olunan inventar</li>
+                                <li>Tələb olunan inventar və istifadəçi barədə ətraflı məlumatın daxil edilməsi</li>
+                            </ul>
+                          
+                        </div>
+                    </div>
+                </li>
+                <li class="timeline-inverted">
+                    <div class="timeline-badge warning">
+                        <i class="fa fa-credit-card"></i>
+                    </div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">Mail vasitəsi ilə təsdiq linkinin göndərilməsi</h4>
+                        </div>
+                        <div class="timeline-body">
+                            <ul>
+                                <li>Sifarişin təsdiqə göndərilməsi</li>
+                                <li>Email ünvanına gələn link</li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+
+
+                <li>
+                    <div class="timeline-badge success">
+                        <i class="fa fa-graduation-cap"></i>
+                    </div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">Sifarişin təsdiqi və ya imtinası</h4>
+                        </div>
+                        <div class="timeline-body">
+                            <ul>
+                                <li>Daxil edilmiş sifarişə əlavələr və qeyd</li>
+                                <li>Təsdiq və ya İmtina</li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</div>

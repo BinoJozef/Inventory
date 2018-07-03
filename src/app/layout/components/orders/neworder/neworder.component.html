@@ -1,0 +1,129 @@
+<p-growl [life]="5000" [value]="msgs"></p-growl>
+
+
+<div *ngIf="!formActive" class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4" style="text-align:center;">{{templateMessage}}</h1>      
+    </div>
+  </div>
+
+<loadingspinner *ngIf="!customers && formActive"></loadingspinner>
+<form *ngIf="formActive && customers" class="form-signin" #f="ngForm" (ngSubmit)="submit()" novalidate>
+  <div class="row">
+    <div class="col-md-4">
+      <h4 class="mb-3">Sifariş formu</h4>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+
+      <div class="form-group">
+
+        <label for="customerCode">Müştəri kodu və adı</label>
+
+        <ng-select [disabled]="mDisabledGroup" name="customerCode"  #customerCode="ngModel" (change)="onCustomerCodeChange()"
+           [(ngModel)]="order.customerCode" [virtualScroll]="true"  [loading]="loading" labelForId="customerCode" placeholder="Müştəri seçin" 
+          required>
+          <ng-template *ngIf="tmarketingActive" ng-header-tmp>
+            <button (click)="fetchMore()" type="button" class="btn btn-sm btn-secondary">Yenilə</button>  
+              <i style="font-size:13px;color:red">Müştəri sayı 10000 dən artıq olduğu halda yenilə düyməsi ilə istədiyiniz müştərini yüklənən siyahıdan tapa bilərsiniz</i>   
+             <small  class="form-text text-muted">Yüklənən {{customerSkipSize}} ümumi {{customersTotalCount}}</small>
+        </ng-template>
+          <ng-option *ngFor="let c of customers" value="{{c.code}}">{{c.code}}-{{c.name }}</ng-option>
+        </ng-select>
+     
+        <span style="color:red" *ngIf="customerCode.touched && customerCode.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="customertype">Müştəri tipi</label>
+        <div class="input-group">
+          <input disabled [value]="customerCategory" name="customertype" id="customertype" type="text" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="branch">Müştəri iş yeri</label>
+        <div class="input-group">
+          <input disabled [value]="customerBranch" name="branch" id="branch" type="text" class="form-control">
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label for="categoryId">Inventar kateqoriyası</label>
+        <select [disabled]="tmDisabledGroup" [min]="1" (change)="onCategoryChange()" #categoryId="ngModel" [(ngModel)]="order.categoryId"
+          name="categoryId" id="categoryId" class="form-control custom-select d-block w-100" required>
+          <option value=""></option>
+          <option *ngFor="let c of categories" value="{{ c.id }}">{{ c.name }}</option>
+        </select>
+        <span style="color:red" *ngIf="categoryId.errors?.min && categoryId.touched && categoryId.invalid">Bu sahəni doldurmaq lazımdır!</span>
+
+      </div>
+
+      <div class="form-group">
+        <label for="subCategoryId">Inventar alt kateqoriyası</label>
+        <select [disabled]="t_mDisabledGroup" [min]="1" (change)="onSubCategoryChange()" #subCategoryId="ngModel" [(ngModel)]="order.subCategoryId"
+          name="subCategoryId" id="subCategoryId" class="form-control custom-select d-block w-100" required>
+          <option value=""></option>
+          <option *ngFor="let sc of subCategories" value="{{ sc.id }}">{{ sc.name }}</option>
+        </select>
+        <span style="color:red" *ngIf="subCategoryId.errors?.min && subCategoryId.touched && subCategoryId.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+      <div  class="form-group">
+        <label for="stock">Stok</label>
+        <div class="input-group">
+          <input disabled [value]="stock" name="stock" id="stock" type="text" class="form-control">
+        </div>
+      </div>
+
+
+      <!-- yalniz techicatda aktiv olacaq -->
+      <div *ngIf="outfitActive" class="form-group">
+        <label for="itemCode">Inventar kodu və adı</label>
+
+        <ng-select name="itemCode" #itemCode="ngModel" [(ngModel)]="order.itemCode" labelForId="itemCode" placeholder="İnventar kodu seçin"  [virtualScroll]="true"  [loading]="loading"
+          required>
+
+          <ng-option *ngFor="let i of items" value="{{i.code}}">{{i.code}}-{{i.name }}</ng-option>
+        </ng-select>
+
+        <span style="color:red" *ngIf="itemCode.touched && itemCode.invalid">Bu sahəni doldurmaq lazımdır!</span>
+      </div>
+
+
+    </div>
+
+    <div class="col-md-4">
+
+      <div class="form-group">
+        <label for="note">Qeyd</label>
+        <textarea #note="ngModel" [(ngModel)]="order.note" name="note" id="note" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div *ngIf="order.masterId" class="form-group">
+        <label>Mövcud Qeydlər</label>
+        <ul class="list-group" >
+          <li class="list-group-item list-group-item-info" *ngFor="let n of notes">{{n.userName}}({{n.noteBy}})     
+            <ul class="list-group" >
+              <li class="list-group-item list-group-item-primary">{{n.note}}</li>
+            </ul>
+          </li>
+        </ul>
+    </div>
+
+    </div>
+  </div>
+<div>
+  <button [disabled]="!f.valid"  class="btn  btn-primary">{{applyButtonText}}</button>
+
+  <button *ngIf="order.masterId" type="button" class="btn btn-danger" (click)="cancelOrder()">Imtina Et</button>
+  </div>
+  <!-- :id olduqda aktiv olacag -->
+</form>
+
+

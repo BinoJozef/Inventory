@@ -1,0 +1,329 @@
+<p-growl [baseZIndex]="100" [life]="5000" [value]="msgs"></p-growl>
+
+<loadingspinner *ngIf="!items"></loadingspinner>
+
+<div *ngIf="items">
+
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#categoryModalCenter">
+        Kateqoriya əməl.
+    </button>
+    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#subCategoryModalCenter">
+        Alt Kateqoriya əməl.
+    </button>
+
+
+<p-table #dt [columns]="itemsCol" [value]="items" [(selection)]="selectedItems" [responsive]="true" [paginator]="true" [rows]="20"
+  [alwaysShowPaginator]="false">
+  <ng-template pTemplate="caption">
+        Inventarlar
+    </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th  rowspan="2" style="width: 2.25em">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+     
+    </tr>
+    <tr>
+           
+      <th *ngFor="let col of columns" [ngSwitch]="col.field">
+        <input *ngSwitchCase="'company'" pInputText type="text" placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <input *ngSwitchCase="'code'" pInputText type="text" placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <input *ngSwitchCase="'name'" pInputText type="text" placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <input *ngSwitchCase="'category'" pInputText type="text" placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <input *ngSwitchCase="'subCategory'" pInputText type="text" placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <input *ngSwitchCase="'customerName'" pInputText type="text"  placeholder="Axtar" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        <p-dropdown *ngSwitchCase="'status'" [options]="statusesCol" [style]="{'width':'100%'}" (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+      <td>
+        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+      </td>
+      <td *ngFor="let col of columns">
+            <span class="ui-column-title">{{col.header}}</span>
+        {{rowData[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="summary" let-rowData>
+    <div class="ui-helper-clearfix" style="width:100%">
+      <button style="float:left" [disabled]="(!selectedItems || selectedItems?.length ===0)" type="button" class="btn btn-primary btn-sm"
+        data-toggle="modal" data-target="#updateModalCenter">
+        <i class="fa fa-pencil-square-o"></i>&nbsp;Yenilə
+      </button>
+      <button type="button" style="float:left; margin-left:10px;" class="btn btn-warning btn-sm" (click)="dt.exportCSV()">
+        <i class="fa fa-file-excel-o"></i>&nbsp;Excel(Hamısı)</button>
+      <button type="button" style="float:left; margin-left:10px;" class="btn btn-warning btn-sm" (click)="dt.exportCSV({selectionOnly:true})">
+        <i class="fa fa-file-excel-o"></i>&nbsp;Excel(Seçilmiş)</button>
+    </div>
+  </ng-template>
+</p-table>
+
+
+    <!-- <p-dataTable #dt [value]="items" [(selection)]="selectedItems" [responsive]="true" [paginator]="true" [rows]="20" [headerCheckboxToggleAllPages]="true"
+        [alwaysShowPaginator]="false">
+        <p-header>Inventarlar</p-header>
+        <p-column [style]="{'width':'38px'}" selectionMode="multiple"></p-column>
+        <p-column field="company" header="Şirkət" [sortable]="true" [filter]="true"></p-column>
+        <p-column field="code" header="Kod" [sortable]="true" [filter]="true"></p-column>
+        <p-column field="name" header="Ad" [sortable]="true" [filter]="true"></p-column>
+        <p-column field="category" header="Kateqoriya" [filter]="true"></p-column>
+        <p-column field="subCategory" header="Alt Kateqoriya" [filter]="true"></p-column>
+        <p-column field="status" header="Status" [filter]="true">
+            <ng-template pTemplate="filter" let-col>
+                <p-dropdown [options]="statusesCol" [style]="{'width':'100%'}" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" styleClass="ui-column-filter"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column field="customerName" header="Musteri" [filter]="true"></p-column>
+        <p-footer>
+            <div class="ui-helper-clearfix" style="width:100%">
+                <button style="float:left" [disabled]="(!selectedItems || selectedItems?.length ===0)" type="button" class="btn btn-primary btn-sm"
+                    data-toggle="modal" data-target="#updateModalCenter">
+                    <i class="fa fa-pencil-square-o"></i>&nbsp;Yenilə
+                </button>
+                <button type="button" style="float:left; margin-left:10px;" class="btn btn-warning btn-sm" (click)="dt.exportCSV()" >
+                        <i class="fa fa-file-excel-o"></i>&nbsp;Excel(Hamısı)</button>
+                <button type="button" style="float:left; margin-left:10px;" class="btn btn-warning btn-sm" (click)="dt.exportCSV({selectionOnly:true})" >
+                        <i class="fa fa-file-excel-o"></i>&nbsp;Excel(Seçilmiş)</button>
+            </div>
+        </p-footer>
+    </p-dataTable> -->
+
+
+    <div class="modal fade" id="updateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Yenile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-signin" #f="ngForm" (ngSubmit)="edit()" novalidate>
+
+                        <div class="form-group">
+                            <label for="categoryId">Kateqoriya</label>
+                            <select [min]="1" (change)="onCategoryChange()" #categoryId="ngModel" [(ngModel)]="itemsForDialog.categoryId" name="categoryId"
+                                id="categoryId" class="form-control custom-select d-block w-100" required>
+                                <option value=""></option>
+                                <option *ngFor="let c of categories" value="{{ c.id }}">{{ c.name }}</option>
+                            </select>
+                            <span style="color:red" *ngIf="categoryId.errors?.min && categoryId.touched && categoryId.invalid">Bu sahəni doldurmaq lazımdır!</span>
+
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="subCategoryId">Alt Kateqoriya</label>
+                            <select [min]="1" #subCategoryId="ngModel" [(ngModel)]="itemsForDialog.subCategoryId" name="subCategoryId" id="subCategoryId"
+                                class="form-control custom-select d-block w-100" required>
+                                <option value=""></option>
+                                <option *ngFor="let sc of subCategories" value="{{ sc.id }}">{{ sc.name }}</option>
+                            </select>
+                            <span style="color:red" *ngIf="subCategoryId.errors?.min && subCategoryId.touched && subCategoryId.invalid">Bu sahəni doldurmaq lazımdır!</span>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="itemstatus">Status</label>
+                            <select [min]="1" #itemstatus="ngModel" [(ngModel)]="itemsForDialog.statusId" name="itemstatus" id="itemstatus" class="form-control custom-select d-block w-100"
+                                required>
+                                <option value=""></option>
+                                <option *ngFor="let s of itemStatus" value="{{ s.id }}">{{ s.name }}</option>
+                            </select>
+                            <span style="color:red" *ngIf="itemstatus.errors?.min && itemstatus.touched && itemstatus.invalid">Bu sahəni doldurmaq lazımdır!</span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                            <button [disabled]="!f.valid" class="btn btn-primary">Yadda Saxla</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="categoryModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Kateqoriya Əməliyyatı</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" >
+
+                        <div class="d-flex flex-row">
+                                <div class="radio radio-info radio-inline p-2">
+                                    <input type="radio" name="radio5" id="radio8" (click)="catAddClicked()" checked>
+                                    <label for="radio8">
+                                        Əlavə et
+                                    </label>
+                                </div>
+                                <div class="radio radio-danger p-2">
+                                    <input type="radio" name="radio5" id="radio9" (click)="catRemoveClicked()">
+                                    <label for="radio9">
+                                        Silmək
+                                    </label>
+                                </div>
+                            </div>
+                
+                    <form class="form-signin" #cat="ngForm" (ngSubmit)="addCategory(); cat.reset();" novalidate>
+
+
+
+
+                        <div class="form-group">
+                            <label>Mövcud Kateqoriyalar</label>
+                            <ul class="list-group">
+                                <li class="list-group-item list-group-item-info" *ngFor="let c of categories">{{c.name}}</li>
+                            </ul>
+                        </div>
+
+                        <div *ngIf="categoryDeleteActive" class="form-group">
+                                <label for="categoryId">Kateqoriya</label>
+                                <select [min]="1" #categoryId="ngModel" [(ngModel)]="catModel.catId" name="categoryId" id="categoryId" class="form-control custom-select d-block w-100"
+                                    required>
+                                    <option value=""></option>
+                                    <option *ngFor="let c of categories" value="{{ c.id }}">{{ c.name }}</option>
+                                </select>
+                                <span style="color:red" *ngIf="categoryId.errors?.min && categoryId.touched && categoryId.invalid">Bu sahəni doldurmaq lazımdır!</span>
+    
+                            </div>
+                            <!-- *ngIf="categoryAddActive" -->
+                        <div *ngIf="categoryAddActive" class="form-group">
+                            <label for="c">Kateqoriya</label>
+                            <div class="input-group">
+                                <input #c="ngModel" [(ngModel)]="catModel.name" name="c" id="c" type="text" class="form-control" required>
+                            </div>
+                            
+                            <span style="color:red" *ngIf="c.touched && c.invalid">Bu sahəni doldurmaq lazımdır!</span>
+                           
+                        </div>
+
+
+
+                        <div class="modal-footer">
+                                
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                            <button *ngIf="categoryAddActive" [disabled]="!cat.valid" class="btn btn-primary">Yadda Saxla</button>
+                            <!-- *ngIf="categoryAddActive" -->
+                            <button *ngIf="categoryDeleteActive" type="button" (click)="deleteCategory()" [disabled]="!cat.valid" class="btn btn-danger">Sil</button>
+                        </div>
+                      
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade " id="subCategoryModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Alt Kateqoriya Əməliyyatı</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="d-flex flex-row">
+                                <div class="radio radio-info radio-inline p-2">
+                                    <input type="radio" name="radio2" id="radio3" (click)="subCatAddClicked()" checked>
+                                    <label for="radio3">
+                                        Əlavə et
+                                    </label>
+                                </div>
+                                <div class="radio radio-danger p-2">
+                                    <input type="radio" name="radio2" id="radio4" (click)="subCatRemoveClicked()">
+                                    <label for="radio4">
+                                        Silmək
+                                    </label>
+                                </div>
+                            </div>
+                       
+                    <form class="form-signin" #subCat="ngForm" (ngSubmit)="addSubCategory(); subCat.reset()" novalidate>
+
+                        <div class="form-group">
+                            <label>Mövcud Alt Kateqoriyalar</label>
+                            <ul class="list-group">
+                                <li class="list-group-item list-group-item-info" *ngFor="let c of categories">
+                                    {{c.name}}
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-primary" *ngFor="let sc of c.subCategories">
+                                            {{sc.name}}
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoryIdModal">Kateqoriya</label>
+                            <select [min]="1" #categoryIdModal="ngModel" (change)="onCategoryChangeModal()" [(ngModel)]="subModel.catId" name="categoryIdModal" id="categoryIdModal" class="form-control custom-select d-block w-100"
+                                required>
+                                <option value=""></option>
+                                <option *ngFor="let c of categories" value="{{ c.id }}">{{ c.name }}</option>
+                            </select>
+                            <span style="color:red" *ngIf="categoryIdModal.errors?.min && categoryIdModal.touched && categoryIdModal.invalid">Bu sahəni doldurmaq lazımdır!</span>
+
+                        </div>
+
+
+                        <div *ngIf="subCatDeleteActive" class="form-group">
+                                <label for="subCategoryIdModal">Alt Kateqoriya</label>
+                                <select [min]="1" #subCategoryIdModal="ngModel" [(ngModel)]="subModel.subCatId" name="subCategoryIdModal" id="subCategoryIdModal"
+                                    class="form-control custom-select d-block w-100" required>
+                                    <option value=""></option>
+                                    <option *ngFor="let sc of subCategories" value="{{ sc.id }}">{{ sc.name }}</option>
+                                </select>
+                                <span style="color:red" *ngIf="subCategoryIdModal.errors?.min && subCategoryIdModal.touched && subCategoryIdModal.invalid">Bu sahəni doldurmaq lazımdır!</span>
+                            </div>
+
+
+                        <div *ngIf="subCatAddActive" class="form-group">
+                            <label for="sCat">Alt Kateqoriya</label>
+                            <div class="input-group">
+                                <input #sCat="ngModel" [(ngModel)]="subModel.name" name="sCat" id="sCat" type="text" class="form-control" required>
+                            </div>
+                            <span style="color:red" *ngIf="sCat.touched && sCat.invalid">Bu sahəni doldurmaq lazımdır!</span>
+                        </div>
+                        
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                            <button *ngIf="subCatAddActive" [disabled]="!subCat.valid" class="btn btn-primary">Yadda Saxla</button>
+                            <button *ngIf="subCatDeleteActive" type="button" (click)="deleteSubCategory()" [disabled]="!subCat.valid" class="btn btn-danger">Sil</button>
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>

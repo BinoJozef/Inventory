@@ -1,0 +1,92 @@
+<nav  class="sidebar">
+  <div class="list-group">
+    <a [routerLinkActive]="['router-link-active']"  routerLink="/home" class="list-group-item">
+      <span class="fa fa-fw fa-dashboard"></span>&nbsp; Ana Səhifə
+    </a>
+    <!-- <a *ngIf="orderModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/orders" class="list-group-item">
+      <span class="fa fa-fw fa-edit"></span>&nbsp; Sifarişlər
+    </a> -->
+    <!-- <a *ngIf="inventoryModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/inventoryoperation" class="list-group-item">
+      <span class="fa fa-fw fa-wrench"></span>
+      İnventar Əməliyyatları
+    </a> -->
+    
+    <div class="nested-menu">
+      <a  *ngIf="processMainModuleVisibility"  class="list-group-item" (click)="addExpandClass('process')">
+          <span class="fa fa-fw fa-wrench"></span>&nbsp;Əməliyyatlar
+      </a>
+      <li class="nested" [class.expand]="showMenu === 'process'">
+        <ul class="submenu">
+          <li>
+            <a *ngIf="newOrderModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/order/new" class="list-group-item">
+              <span class="fa fa-fw fa-plus"></span>Sifariş
+            </a>
+          </li>
+        
+          <li>
+            <a *ngIf="transferModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/transfer/new" class="list-group-item">
+              <span class="fa fa-fw fa-circle-o-notch"></span>Transfer
+            </a>
+          </li>
+
+          <li>
+            <a *ngIf="appealModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/appeals" class="list-group-item">
+              <span class="fa fa-fw fa-clone"></span>Müraciətlər
+            </a>
+          </li>
+
+          <li>
+              <a *ngIf="approveModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/approves" class="list-group-item">
+                <span class="fa fa-fw fa-check"></span>Təsdiq
+              </a>
+            </li>
+         
+        </ul>
+      </li>
+    </div>
+
+
+    <a *ngIf="inventoryModuleVisibility" [routerLinkActive]="['router-link-active']" routerLink="/inventoryoperation" class="list-group-item">
+      <span class="fa fa-fw fa-building"></span>&nbsp;İnventarlar               
+    </a>
+
+     
+
+      <a [routerLinkActive]="['router-link-active']" routerLink="/reports" class="list-group-item">
+        <span class="fa fa-fw fa-table"></span>
+        Ümumi Hesabatlar
+      </a>
+    
+      <div  class="footer">
+        <img src="../assets/LOGO_ag_800x640.svg" height="210px" width="220px">
+      </div>
+    
+
+    <div class="header-fields">
+      <!-- <a (click)="rltAndLtr()" class="list-group-item">
+        <span>
+          <i class="fa fa-arrows-h"></i>&nbsp; RTL/LTR</span>
+      </a> -->
+
+      <div class="nested-menu">
+        <a class="list-group-item" (click)="addExpandClass('profile')">
+          <span>
+            <i class="fa fa-user"></i>&nbsp; {{userPermissions.FullName}}</span>
+        </a>
+        <li class="nested" [class.expand]="showMenu === 'profile'">
+          <ul class="submenu">
+
+            <li>
+              <a (click)="onLogoutClick()">
+                <span>
+                  <i class="fa fa-fw fa-power-off"></i> Çıxış</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </div>
+     
+    </div>
+    
+  </div>
+</nav>
